@@ -30,8 +30,7 @@ const Signup = () => {
 
   const handleSignup = () => {
     console.log(form);
-    localStorage.setItem("token", "fake-auth-token");
-    navigate("/");
+    navigate("/verify-otp");
   };
 
   return (

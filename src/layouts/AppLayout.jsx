@@ -25,7 +25,7 @@ const AppLayout = () => {
 
   useEffect(() => {
     if (!token) {
-      navigate("/verify-otp");
+      navigate("/login");
     }
   }, [navigate, token]);
 
