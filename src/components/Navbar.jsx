@@ -1,7 +1,16 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import routes from "../routes";
 
 const Navbar = () => {
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+  const handleLogout = () => {
+    if (token) {
+      localStorage.removeItem("token");
+    }
+    navigate("/login");
+  };
+
   return (
     <>
       <header className="w-full bg-slate-100 rounded mb-10">
@@ -14,9 +23,9 @@ const Navbar = () => {
                   <Link to={route.path}>{route.title}</Link>
                 </li>
               ))}
-            {/* <li className="hover:text-blue-900 text-lg">
-              <Link to={"/"}>Logout</Link>
-            </li> */}
+            <li className="hover:text-blue-900 text-lg ml-auto cursor-pointer">
+              <span onClick={handleLogout}>Logout</span>
+            </li>
           </ul>
         </nav>
       </header>
