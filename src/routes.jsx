@@ -7,6 +7,7 @@ import Men from "./pages/Men";
 import NotFound from "./pages/NotFound";
 import Product from "./pages/Product";
 import Signup from "./pages/Signup";
+import VerifyOTP from "./pages/VerifyOTP";
 import Women from "./pages/Women";
 
 const routes = [
@@ -25,6 +26,10 @@ const routes = [
       {
         path: "/forgot-password",
         element: <ForgotPassword />,
+      },
+      {
+        path: "/verify-otp",
+        element: <VerifyOTP />,
       },
       {
         path: "/",

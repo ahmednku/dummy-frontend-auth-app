@@ -10,6 +10,8 @@ const hideNavbar = (path) => {
       return true;
     case "/forgot-password":
       return true;
+    case "/verify-otp":
+      return true;
     default:
       return false;
   }
@@ -23,7 +25,7 @@ const AppLayout = () => {
 
   useEffect(() => {
     if (!token) {
-      navigate("/login");
+      navigate("/verify-otp");
     }
   }, [navigate, token]);
 
@@ -32,7 +34,8 @@ const AppLayout = () => {
       token &&
       (location.pathname === "/login" ||
         location.pathname === "/signup" ||
-        location.pathname === "/forgot-password")
+        location.pathname === "/forgot-password" ||
+        location.pathname === "/verify-otp")
     ) {
       navigate("/");
     }
