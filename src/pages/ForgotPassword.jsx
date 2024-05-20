@@ -1,22 +1,41 @@
+import { useFormik } from "formik";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import * as Yup from "yup";
 
 const ForgotPassword = () => {
-  const [form, setForm] = useState({ email: "" });
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+  const handleSubmit = async (values) => {
+    try {
+      setSubmitting(true);
+      console.log(values);
+      setSubmitting(false);
+    } catch (error) {
+      console.error(error);
+      setSubmitting(false);
+    }
   };
 
-  const handleSubmit = () => {
-    console.log(form);
-  };
+  const validationSchema = Yup.object().shape({
+    email: Yup.string().email("Invalid email").required("Email is required"),
+  });
+
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+    },
+    validationSchema,
+    onSubmit: handleSubmit,
+  });
 
   return (
     <>
       <div className="grid place-items-center w-screen fixed top-0 left-0 h-screen">
-        <form className="w-[95%] max-w-[600px] bg-slate-100 mx-auto p-5 relative -top-20 rounded-lg">
+        <form
+          onSubmit={formik.handleSubmit}
+          className="w-[95%] max-w-[600px] bg-slate-100 mx-auto p-5 relative -top-20 rounded-lg"
+        >
           <div className="w-full text-left mb-5">
             <p className="pb-5 border-b text-center">
               Enter the email address associated with your account and we will
@@ -31,16 +50,18 @@ const ForgotPassword = () => {
               type="email"
               name="email"
               className="border w-full px-2 py-1"
-              onChange={(e) => {
-                handleChange(e);
-              }}
+              value={formik.values.email}
+              onChange={formik.handleChange}
             />
+            {formik.touched.email && formik.errors.email && (
+              <p className="text-red-500 text-sm mt-1">{formik.errors.email}</p>
+            )}
           </div>
           <div className="flex items-center justify-between flex-col gap-3">
             <button
-              type="button"
+              type="submit"
+              disabled={submitting}
               className="bg-slate-500 px-5 py-2 rounded text-white w-56"
-              onClick={handleSubmit}
             >
               Submit
             </button>

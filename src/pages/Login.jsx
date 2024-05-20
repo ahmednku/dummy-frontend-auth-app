@@ -1,31 +1,56 @@
+import { useFormik } from "formik";
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom";
+import * as Yup from "yup";
+import { CONSTANTS } from "../constants/constants";
 
 const Login = () => {
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [submitting, setSubmitting] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const navigate = useNavigate();
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
 
   const handlePasswordVisibility = () => {
     setIsPasswordVisible((prev) => !prev);
   };
 
-  const handleLogin = () => {
-    console.log(form);
-    localStorage.setItem("token", "fake-auth-token");
-    navigate("/");
+  const validationSchema = Yup.object().shape({
+    email: Yup.string().email("Invalid email.").required("Email is required."),
+    password: Yup.string()
+      .min(6, "Password must be at least 6 characters.")
+      .max(25, "Password must be less than 25 characters.")
+      .required("Password is required"),
+  });
+
+  const handleLogin = async (values) => {
+    try {
+      setSubmitting(true);
+      console.log(values);
+      localStorage.setItem(CONSTANTS.AUTH_TOKEN, CONSTANTS.AUTH_TOKEN_VALUE);
+      navigate("/");
+      setSubmitting(false);
+    } catch (error) {
+      console.error(error);
+      setSubmitting(false);
+    }
   };
+
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema,
+    onSubmit: handleLogin,
+  });
 
   return (
     <>
       <div className="grid place-items-center w-screen fixed top-0 left-0 h-screen">
-        <form className="w-[95%] max-w-[600px] bg-slate-100 mx-auto p-5 relative -top-20 rounded-lg">
+        <form
+          onSubmit={formik.handleSubmit}
+          className="w-[95%] max-w-[600px] bg-slate-100 mx-auto p-5 relative -top-20 rounded-lg"
+        >
           <div className="w-full text-left mb-5">
             <label htmlFor="email" className="block mb-2">
               Email
@@ -34,10 +59,12 @@ const Login = () => {
               type="email"
               name="email"
               className="border w-full px-2 py-1"
-              onChange={(e) => {
-                handleChange(e);
-              }}
+              value={formik.values.email}
+              onChange={formik.handleChange}
             />
+            {formik.touched.email && formik.errors.email && (
+              <p className="text-red-500 text-sm mt-1">{formik.errors.email}</p>
+            )}
           </div>
           <div className="w-full text-left mb-5 relative">
             <label htmlFor="password" className="block mb-2">
@@ -47,18 +74,22 @@ const Login = () => {
               type={isPasswordVisible ? "text" : "password"}
               name="password"
               className="border w-full px-2 py-1"
-              onChange={(e) => {
-                handleChange(e);
-              }}
+              value={formik.values.password}
+              onChange={formik.handleChange}
             />
+            {formik.touched.password && formik.errors.password && (
+              <p className="text-red-500 text-sm mt-1">
+                {formik.errors.password}
+              </p>
+            )}
             {isPasswordVisible ? (
-              <FaEyeSlash
-                className="cursor-pointer absolute bottom-10 right-5"
+              <FaEye
+                className="cursor-pointer absolute top-10 right-5"
                 onClick={handlePasswordVisibility}
               />
             ) : (
-              <FaEye
-                className="cursor-pointer absolute bottom-10 right-5"
+              <FaEyeSlash
+                className="cursor-pointer absolute top-10 right-5"
                 onClick={handlePasswordVisibility}
               />
             )}
@@ -70,9 +101,9 @@ const Login = () => {
           </div>
           <div className="flex items-center justify-between flex-col gap-3">
             <button
-              type="button"
+              type="submit"
               className="bg-slate-500 px-5 py-2 rounded text-white w-56"
-              onClick={handleLogin}
+              disabled={submitting}
             >
               Login
             </button>

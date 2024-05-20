@@ -1,3 +1,8 @@
+const CONSTANTS = {
+  AUTH_TOKEN: "token",
+  AUTH_TOKEN_VALUE: "fake-auth-token",
+};
+
 const PRODUCT_CATEGORIES = {
   MEN: "Men",
   WOMEN: "Women",
@@ -147,4 +152,4 @@ const PRODUCTS = [
   },
 ];
 
-export { PRODUCTS, PRODUCT_CATEGORIES };
+export { CONSTANTS, PRODUCTS, PRODUCT_CATEGORIES };
