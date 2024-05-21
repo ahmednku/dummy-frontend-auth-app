@@ -3,13 +3,13 @@
 @tailwind utilities;
 
 /* Chrome, Safari, Edge, Opera */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
+.otp-screen input::-webkit-outer-spin-button,
+.otp-screen input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
 /* Firefox */
-input[type="number"] {
+.otp-screen input[type="number"] {
   -moz-appearance: textfield;
 }
