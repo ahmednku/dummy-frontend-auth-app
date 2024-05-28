@@ -1,7 +1,9 @@
-const CONSTANTS = {
-  AUTH_TOKEN: "token",
-  AUTH_TOKEN_VALUE: "fake-auth-token",
+const USER_ROLES = {
+  ADMIN: "admin",
+  USER: "user",
 };
+
+const AUTH_ROUTES = ["/login", "/signup", "/forgot-password", "/verify-otp"];
 
 const PRODUCT_CATEGORIES = {
   MEN: "Men",
@@ -152,4 +154,4 @@ const PRODUCTS = [
   },
 ];
 
-export { CONSTANTS, PRODUCTS, PRODUCT_CATEGORIES };
+export { PRODUCTS, PRODUCT_CATEGORIES, USER_ROLES, AUTH_ROUTES };

@@ -55,11 +55,11 @@ const routes = [
         path: "/product/:id",
         element: <Product />,
       },
+      {
+        path: "*",
+        element: <NotFound />,
+      },
     ],
-  },
-  {
-    path: "*",
-    element: <NotFound />,
   },
 ];
 

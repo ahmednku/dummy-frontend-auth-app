@@ -1,17 +1,20 @@
 import { useFormik } from "formik";
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
+import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
-import { CONSTANTS } from "../constants/constants";
+import { useRegisterMutation } from "../services/api";
+import { setField } from "../store/slices/userSlice";
 
 const Signup = () => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
     useState(false);
   const [submitting, setSubmitting] = useState(false);
-
+  const [register] = useRegisterMutation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handlePasswordVisibility = () => {
     setIsPasswordVisible((prev) => !prev);
@@ -36,8 +39,14 @@ const Signup = () => {
   const handleSignup = async (values) => {
     try {
       setSubmitting(true);
-      console.log(values);
-      localStorage.setItem(CONSTANTS.AUTH_TOKEN, CONSTANTS.AUTH_TOKEN_VALUE);
+      const response = await register({
+        fullname: values.name,
+        email: values.email,
+        password: values.password,
+      }).unwrap();
+      console.log(response);
+      if (response.status === 201)
+        dispatch(setField({ field: "email", value: response.email }));
       navigate("/verify-otp");
       setSubmitting(false);
     } catch (error) {

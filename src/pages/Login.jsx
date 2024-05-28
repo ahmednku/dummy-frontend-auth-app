@@ -1,14 +1,19 @@
 import { useFormik } from "formik";
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
+import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
-import { CONSTANTS } from "../constants/constants";
+import { useLoginMutation } from "../services/api";
+import { setField, setUser } from "../store/slices/userSlice";
 
 const Login = () => {
   const [submitting, setSubmitting] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const navigate = useNavigate();
+
+  const [login] = useLoginMutation();
+  const dispatch = useDispatch();
 
   const handlePasswordVisibility = () => {
     setIsPasswordVisible((prev) => !prev);
@@ -25,8 +30,15 @@ const Login = () => {
   const handleLogin = async (values) => {
     try {
       setSubmitting(true);
-      console.log(values);
-      localStorage.setItem(CONSTANTS.AUTH_TOKEN, CONSTANTS.AUTH_TOKEN_VALUE);
+      const response = await login({
+        email: values.email,
+        password: values.password,
+      }).unwrap();
+      console.log(response);
+      if (response.status === 200) {
+        dispatch(setUser(response.user));
+        dispatch(setField({ field: "token", value: response.token }));
+      }
       navigate("/");
       setSubmitting(false);
     } catch (error) {

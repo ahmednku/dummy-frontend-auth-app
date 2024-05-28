@@ -1,49 +1,28 @@
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import { useEffect } from "react";
-
-const hideNavbar = (path) => {
-  switch (path) {
-    case "/login":
-      return true;
-    case "/signup":
-      return true;
-    case "/forgot-password":
-      return true;
-    case "/verify-otp":
-      return true;
-    default:
-      return false;
-  }
-};
+import { AUTH_ROUTES } from "../constants/constants";
 
 const AppLayout = () => {
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
   const location = useLocation();
-  const isNavbarHidden = hideNavbar(location.pathname);
+  const { token } = useSelector((state) => state.user);
+  const isAuthRoute = AUTH_ROUTES.includes(location.pathname);
 
   useEffect(() => {
-    if (!token) {
+    const isAuthRoute = AUTH_ROUTES.includes(location.pathname);
+
+    if (token && isAuthRoute) {
+      navigate("/");
+    } else if (!token && !isAuthRoute) {
       navigate("/login");
     }
-  }, [navigate, token]);
-
-  useEffect(() => {
-    if (
-      token &&
-      (location.pathname === "/login" ||
-        location.pathname === "/signup" ||
-        location.pathname === "/forgot-password" ||
-        location.pathname === "/verify-otp")
-    ) {
-      navigate("/");
-    }
-  }, [location.pathname, navigate, token]);
+  }, [navigate, location, token]);
 
   return (
     <>
-      {!isNavbarHidden && <Navbar />}
+      {!isAuthRoute && <Navbar />}
       <Outlet />
     </>
   );

@@ -1,11 +1,19 @@
 import { useFormik } from "formik";
 import { useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
+import { useVerifyOtpMutation } from "../services/api";
+import { setUser } from "../store/slices/userSlice";
 
 const VerifyOTP = () => {
   const inputRefs = useRef([]);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const navigate = useNavigate();
+  const [verifyOtp] = useVerifyOtpMutation();
+  const { email } = useSelector((store) => store.user);
+  const dispatch = useDispatch();
 
   const formik = useFormik({
     initialValues: {
@@ -24,12 +32,18 @@ const VerifyOTP = () => {
       4: Yup.number().required(),
       5: Yup.number().required(),
     }),
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
       setSubmitting(true);
       const otp = Object.values(values).join("");
-      if (otp === "123456") {
-        console.log("OTP is correct:", otp);
+      const response = await verifyOtp({
+        email,
+        otp,
+      }).unwrap();
+      console.log(response);
+      if (response.status === 200) {
+        dispatch(setUser(response.user));
         setError("");
+        navigate("/");
       } else {
         setError("The OTP entered is incorrect. Please try again.");
       }
